@@ -3,17 +3,27 @@ import {
   createUser,
   updateUser,
   deleteUser,
+  addShowsToUser,
+  addWatchedEpisodesToUser,
+  createComments,
+  authUser,
 } from "../models/user";
-// import { verifyToken } from "../middleware/verifyToken";
+import { verifyToken } from "../middleware/verifyToken";
 
 const userRoutes = Router();
 
-userRoutes.post("/", createUser);
+userRoutes.post("/users", createUser);
 
-// userRoutes.get("/user/home", verifyToken, getUser);
+userRoutes.get("/users/login", verifyToken, authUser);
 
-userRoutes.patch("/", updateUser);
+userRoutes.patch("/users/:uid", updateUser);
 
-userRoutes.delete("/", deleteUser);
+userRoutes.delete("/users/:uid", deleteUser);
+
+userRoutes.post("/users/shows/:uid", addShowsToUser);
+
+userRoutes.post("/users/shows/episodes/:uid", addWatchedEpisodesToUser);
+
+userRoutes.post("/users/shows/comments/:uid", createComments);
 
 export default userRoutes;
