@@ -1,7 +1,6 @@
 import { auth, db } from "../config/db";
 import { Request, Response } from "express";
 import { UserRequest } from "../types/user";
-import { ok } from "assert";
 
 db.settings({ ignoreUndefinedProperties: true });
 
