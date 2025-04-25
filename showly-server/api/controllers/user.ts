@@ -10,20 +10,20 @@ import {
 } from "../models/user";
 import { verifyToken } from "../middleware/verifyToken";
 
-const userRoutes = Router();
+const userRouter = Router();
 
-userRoutes.post("/users", createUser);
+userRouter.post("/users", createUser);
 
-userRoutes.get("/users/login", verifyToken, authUser);
+userRouter.get("/users/login", verifyToken, authUser);
 
-userRoutes.patch("/users/:uid", updateUser);
+userRouter.patch("/users/:uid", updateUser);
 
-userRoutes.delete("/users/:uid", deleteUser);
+userRouter.delete("/users/:uid", deleteUser);
 
-userRoutes.post("/users/shows/:uid", addShowsToUser);
+userRouter.post("/users/shows/:uid", addShowsToUser);
 
-userRoutes.post("/users/shows/episodes/:uid", addWatchedEpisodesToUser);
+userRouter.post("/users/shows/episodes/:uid", addWatchedEpisodesToUser);
 
-userRoutes.post("/users/shows/comments/:uid", createComments);
+userRouter.post("/users/shows/comments/:uid", createComments);
 
-export default userRoutes;
+export default userRouter;
