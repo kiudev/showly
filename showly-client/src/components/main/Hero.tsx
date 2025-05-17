@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { getTopRatedSeries, getTrendingSeries } from "@/services/seriesService";
 import { TopRatedData, TrendingData } from "@/types/seriesDataTypes";
 import Autoplay from "embla-carousel-autoplay";
@@ -20,6 +20,7 @@ import {
 
 import { BackgroundCarousel } from "../BackgroundCarousel";
 import { SignInButton } from "./hero/SignInButton";
+import { toast } from "sonner";
 
 const BACKDROP_IMG_URL = import.meta.env.VITE_BACKDROP_IMG_URL;
 const POSTER_IMG_URL = import.meta.env.VITE_POSTER_IMG_URL;
@@ -31,6 +32,7 @@ export const Hero = () => {
   const [topRatedData, setTopRatedData] = useState<TopRatedData[]>([]);
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState<number>(0);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const getSeriesData = async () => {
@@ -80,7 +82,7 @@ export const Hero = () => {
           <SignInButton />
 
           <div className="flex flex-row gap-5">
-            <Dialog>
+            <Dialog onOpenChange={setOpen} open={open}>
               <DialogTrigger className="border rounded-lg px-3 text-sm font-semibold cursor-pointer">
                 Join Us
               </DialogTrigger>
@@ -92,7 +94,7 @@ export const Hero = () => {
                       Create an account to enjoy all the features of Showly.
                     </p>
 
-                    <SignUpForm />
+                    <SignUpForm setOpen={setOpen}/>
                   </DialogDescription>
                 </DialogHeader>
               </DialogContent>
@@ -127,12 +129,7 @@ export const Hero = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            {/* <CarouselPrevious className="text-white" />
-            <CarouselNext className="text-white" /> */}
           </Carousel>
-          <div className="py-2 text-center text-sm text-muted-foreground">
-            Slide {current}
-          </div>
         </div>
       </section>
     </>
@@ -149,23 +146,42 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import { ControllerRenderProps } from "react-hook-form";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/state/store";
+import { updateFields, clearFields } from "@/state/form/formSlice";
+import { FormState } from "@/types/form";
+import { createUserWithEmailAndPassword } from "@/services/auth";
 
-const SignUpForm = () => {
+const SignUpForm = ({ setOpen }: { setOpen: (value: boolean) => void }) => {
   const form = useForm({
     defaultValues: {
       username: "",
       email: "",
       password: "",
-      passwordConfirmation: ""
+      passwordConfirmation: "",
     },
   });
 
-  
+  const formState = useSelector((state: RootState) => state.form);
+  const dispatch = useDispatch();
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    dispatch(updateFields({ field: name as keyof FormState, value }));
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    await createUserWithEmailAndPassword(formState);
+    toast.success("User created successfully");
+    dispatch(clearFields())
+    setOpen(false)
+  };
 
   return (
     <Form {...form}>
-      <form className="space-y-8">
+      <form className="space-y-8" onSubmit={handleSubmit}>
         <FormField
           control={form.control}
           name="username"
@@ -174,29 +190,42 @@ const SignUpForm = () => {
               <CustomFormItem
                 label="Email"
                 placeholder="Email"
+                name="email"
                 type="text"
                 field={field}
+                onChange={handleChange}
+                value={formState.email}
               />
 
               <CustomFormItem
                 label="Password"
+                name="password"
                 placeholder="Password"
                 type="text"
                 field={field}
+                onChange={handleChange}
+                value={formState.password}
               />
 
               <CustomFormItem
                 label="Password Confirmation"
+                name="passwordConfirmation"
                 placeholder="Confirm Password"
                 type="text"
                 field={field}
+                value={formState.passwordConfirmation}
+                onChange={handleChange}
               />
 
               <CustomFormItem
                 label="Username"
+                name="username"
                 placeholder="Username"
                 type="text"
-                field={field} />
+                field={field}
+                onChange={handleChange}
+                value={formState.username}
+              />
             </>
           )}
         />
@@ -206,23 +235,26 @@ const SignUpForm = () => {
   );
 };
 
-interface CustomFormItemProps {
-  label: string;
-  placeholder: string;
-  type: string;
-  field: ControllerRenderProps<{ username: string, email: string, password: string, passwordConfirmation: string }, "username">;
-}
+import { CustomFormItemProps } from "@/types/form";
 
 const CustomFormItem = ({
   label,
   placeholder,
   type,
-  field,
+  onChange,
+  value,
+  name,
 }: CustomFormItemProps) => (
   <FormItem>
     <FormLabel>{label}</FormLabel>
     <FormControl>
-      <Input placeholder={placeholder} type={type} {...field} />
+      <Input
+        name={name}
+        placeholder={placeholder}
+        type={type}
+        value={value}
+        onChange={onChange}
+      />
     </FormControl>
     <FormMessage />
   </FormItem>
