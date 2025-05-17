@@ -1,18 +1,21 @@
 import { Router } from "express";
 import {
-  createUser,
   updateUser,
   deleteUser,
   addShowsToUser,
   addWatchedEpisodesToUser,
   createComments,
   authUser,
+  createUserWithEmailAndPassword,
+  signInWithGoogleAccount,
 } from "../models/user";
 import { verifyToken } from "../middleware/verifyToken";
 
 const userRouter = Router();
 
-userRouter.post("/users", createUser);
+userRouter.post("/users/sign-up/email-password", createUserWithEmailAndPassword);
+
+userRouter.post("/users/sign-in/google", signInWithGoogleAccount);
 
 userRouter.get("/users/login", verifyToken, authUser);
 

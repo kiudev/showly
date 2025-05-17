@@ -1,4 +1,4 @@
-import { auth, db } from "../config/db";
+import { adminAuth, db } from "../config/db";
 import { UserRequest } from "../types/user";
 import { Response, NextFunction } from "express";
 
@@ -7,14 +7,19 @@ export const verifyToken = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  const token = req.headers.authorization?.split(" ")[1];
+  const authHeader = req.headers.authorization;
+
+  const token = authHeader?.startsWith("Bearer ")
+    ? authHeader.split(" ")[1]
+    : null;
+
   if (!token) {
     res.status(401).json({ error: "No token provided" });
     return;
   }
 
   try {
-    const decoded = await auth.verifyIdToken(token);
+    const decoded = await adminAuth.verifyIdToken(token);
     console.log("Decoded token:", decoded);
 
     req.user = decoded;

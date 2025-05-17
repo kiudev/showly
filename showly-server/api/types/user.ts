@@ -7,7 +7,6 @@ export interface UserRequest extends Request {
   };
   userData?: {
     username: string;
-    dateOfBirth: string;
     createdAt: Date;
   };
 }

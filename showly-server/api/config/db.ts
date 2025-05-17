@@ -12,5 +12,5 @@ initializeApp({
   databaseURL: process.env.FIREBASE_DB_URL,
 });
 
-export const auth = admin.auth();
+export const adminAuth = admin.auth();
 export const db = admin.firestore();

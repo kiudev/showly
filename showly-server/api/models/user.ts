@@ -1,4 +1,4 @@
-import { auth, db } from "../config/db";
+import { adminAuth, db } from "../config/db";
 import { Request, Response } from "express";
 import { UserRequest } from "../types/user";
 
@@ -6,11 +6,20 @@ db.settings({ ignoreUndefinedProperties: true });
 
 const usersCollection = db.collection("users");
 
-export const createUser = async (req: Request, res: Response) => {
-  const { email, username, password, dateOfBirth } = req.body;
+export const createUserWithEmailAndPassword = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  const { email, username, password, passwordConfirmation } = req.body;
 
   try {
-    const newUser = await auth.createUser({
+    if (password !== passwordConfirmation) {
+      return res.status(400).json({ message: "Passwords are not equal!", ok: false })
+    } else if (password.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters long!", ok: false })
+    }
+
+    const newUser = await adminAuth.createUser({
       email,
       password,
     });
@@ -18,7 +27,6 @@ export const createUser = async (req: Request, res: Response) => {
     await usersCollection.doc(newUser.uid).set({
       email,
       username,
-      dateOfBirth,
       createdAt: new Date(),
     });
 
@@ -32,12 +40,33 @@ export const createUser = async (req: Request, res: Response) => {
   }
 };
 
+export const signInWithGoogleAccount = async (req: Request, res: Response) => {
+  const { token } = req.body;
+
+  try {
+    const decodedToken = await adminAuth.verifyIdToken(token);
+    const { uid, name, email, picture } = decodedToken;
+
+    await usersCollection.doc(uid).set({
+      username: name,
+      email,
+      createdAt: new Date(),
+      picture
+    });
+
+    res.status(200).json({ token, ok: true })
+  } catch (error) {
+    console.error("Error signing in with Google", error);
+
+    res.status(400).json({ ok: false, error });
+  }
+};
+
 export const authUser = async (req: UserRequest, res: Response) => {
   res.json({
     uid: req.user?.uid,
     email: req.user?.email,
     username: req.userData?.username,
-    dateOfBirth: req.userData?.dateOfBirth,
     createdAt: req.userData?.createdAt,
   });
 };
@@ -50,7 +79,6 @@ export const updateUser = async (req: Request, res: Response) => {
 
     await usersCollection.doc(uid).update({
       username,
-      dateOfBirth,
     });
 
     res.status(200).json({
@@ -69,7 +97,7 @@ export const deleteUser = async (req: Request, res: Response) => {
   const { uid } = req.params;
 
   try {
-    await auth.deleteUser(uid);
+    await adminAuth.deleteUser(uid);
 
     await usersCollection.doc(uid).delete();
 
