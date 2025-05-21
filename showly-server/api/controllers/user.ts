@@ -17,7 +17,7 @@ userRouter.post("/users/sign-up/email-password", createUserWithEmailAndPassword)
 
 userRouter.post("/users/sign-in/google", signInWithGoogleAccount);
 
-userRouter.get("/users/login", verifyToken, authUser);
+userRouter.post("/users/sign-in/email-password", verifyToken, authUser);
 
 userRouter.patch("/users/:uid", updateUser);
 

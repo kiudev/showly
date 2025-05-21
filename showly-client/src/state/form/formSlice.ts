@@ -1,25 +1,41 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { FormState } from "@/types/form";
+import { AuthFormState } from "@/types/auth";
 
-const initialState: FormState = {
-  email: '',
-  username: '',
-  password: '',
-  passwordConfirmation: ''
+const initialState: AuthFormState = {
+  signUp: {
+    email: "",
+    username: "",
+    password: "",
+    passwordConfirmation: "",
+  },
+  signIn: {
+    email: "",
+    password: "",
+  },
 };
 
-const formSlice = createSlice({
-  name: 'form',
+const authFormSlice = createSlice({
+  name: "form",
   initialState,
   reducers: {
-    updateFields: (state, action: PayloadAction<{ field: keyof FormState; value: string }>) => {
+    updateSignUpFields: (
+      state,
+      action: PayloadAction<{ field: keyof AuthFormState["signUp"]; value: string }>
+    ) => {
       const { field, value } = action.payload;
-      state[field] = value;
+      state.signUp[field] = value;
     },
-    clearFields: () => initialState
-  }
-})
+    updateSignInFields: (
+      state,
+      action: PayloadAction<{ field: keyof AuthFormState["signIn"]; value: string }>
+    ) => {
+      const { field, value } = action.payload;
+      state.signIn[field] = value;
+    },
+    clearFields: () => initialState,
+  },
+});
 
-export const { updateFields, clearFields } = formSlice.actions;
+export const { updateSignUpFields, updateSignInFields, clearFields } = authFormSlice.actions;
 
-export default formSlice.reducer
+export default authFormSlice.reducer;

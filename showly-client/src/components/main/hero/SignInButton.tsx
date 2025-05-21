@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { auth } from "@/config/auth";
+import { signInWithGoogleAccount } from "@/services/auth";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router";
-import { toast } from "sonner";
+
 
 export const SignInButton = () => {
   const nav = useNavigate();
@@ -13,33 +14,7 @@ export const SignInButton = () => {
       const user = result.user;
       const token = await user.getIdToken();
 
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/users/sign-in/google`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ token }),
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          localStorage.setItem("token", data.token);
-
-          nav("/home");
-
-          toast.success("Successfully signed in with Google", {
-            description: "Welcome to Showly!"
-          });
-        } else {
-          throw new Error("Failed to sign in with Google");
-        }
-      } catch (error) {
-        console.error("Error signing in:", error);
-      }
+      await signInWithGoogleAccount({ token, nav })
     });
   };
 

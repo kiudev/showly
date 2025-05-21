@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { getTopRatedSeries, getTrendingSeries } from "@/services/seriesService";
+import { getTopRatedSeries, getTrendingSeries } from "@/services/series";
 import { TopRatedData, TrendingData } from "@/types/seriesDataTypes";
 import Autoplay from "embla-carousel-autoplay";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,8 @@ export const Hero = () => {
   const [topRatedData, setTopRatedData] = useState<TopRatedData[]>([]);
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState<number>(0);
-  const [open, setOpen] = useState(false);
+  const [signUpOpen, setSignUpOpen] = useState(false);
+  const [signInOpen, setSignInOpen] = useState(false);
 
   useEffect(() => {
     const getSeriesData = async () => {
@@ -82,7 +83,7 @@ export const Hero = () => {
           <SignInButton />
 
           <div className="flex flex-row gap-5">
-            <Dialog onOpenChange={setOpen} open={open}>
+            <Dialog onOpenChange={setSignUpOpen} open={signUpOpen}>
               <DialogTrigger className="border rounded-lg px-3 text-sm font-semibold cursor-pointer">
                 Join Us
               </DialogTrigger>
@@ -94,13 +95,29 @@ export const Hero = () => {
                       Create an account to enjoy all the features of Showly.
                     </p>
 
-                    <SignUpForm setOpen={setOpen}/>
+                    <SignUpForm setOpen={setSignUpOpen} />
                   </DialogDescription>
                 </DialogHeader>
               </DialogContent>
             </Dialog>
 
-            <Button variant="outline">Sign In</Button>
+            <Dialog onOpenChange={setSignInOpen} open={signInOpen}>
+              <DialogTrigger className="border rounded-lg px-4 py-2 text-sm font-semibold cursor-pointer">
+                Sign In
+              </DialogTrigger>
+              <DialogContent className="bg-white">
+                <DialogHeader>
+                  <DialogTitle>Sign in to Showly</DialogTitle>
+                  <DialogDescription>
+                    <p>
+                      Sign in with your account to enjoy all the features of Showly.
+                    </p>
+
+                    <SignInForm setOpen={setSignInOpen} />
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
 
@@ -148,9 +165,9 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/state/store";
-import { updateFields, clearFields } from "@/state/form/formSlice";
-import { FormState } from "@/types/form";
-import { createUserWithEmailAndPassword } from "@/services/auth";
+import { updateSignUpFields, updateSignInFields, clearFields } from "@/state/form/formSlice";
+import { AuthFormState } from "@/types/auth";
+import { createUserWithEmailAndPassword, fetchSignIn } from "@/services/auth";
 
 const SignUpForm = ({ setOpen }: { setOpen: (value: boolean) => void }) => {
   const form = useForm({
@@ -162,21 +179,21 @@ const SignUpForm = ({ setOpen }: { setOpen: (value: boolean) => void }) => {
     },
   });
 
-  const formState = useSelector((state: RootState) => state.form);
+  const authFormState = useSelector((state: RootState) => state.authForm);
   const dispatch = useDispatch();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    dispatch(updateFields({ field: name as keyof FormState, value }));
+    dispatch(updateSignUpFields({ field: name as keyof AuthFormState["signUp"], value }));
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    await createUserWithEmailAndPassword(formState);
+    await createUserWithEmailAndPassword(authFormState);
     toast.success("User created successfully");
-    dispatch(clearFields())
-    setOpen(false)
+    dispatch(clearFields());
+    setOpen(false);
   };
 
   return (
@@ -192,9 +209,9 @@ const SignUpForm = ({ setOpen }: { setOpen: (value: boolean) => void }) => {
                 placeholder="Email"
                 name="email"
                 type="text"
-                field={field}
+                signUpField={field}
                 onChange={handleChange}
-                value={formState.email}
+                value={authFormState.signUp.email}
               />
 
               <CustomFormItem
@@ -202,9 +219,9 @@ const SignUpForm = ({ setOpen }: { setOpen: (value: boolean) => void }) => {
                 name="password"
                 placeholder="Password"
                 type="text"
-                field={field}
+                signUpField={field}
                 onChange={handleChange}
-                value={formState.password}
+                value={authFormState.signUp.password}
               />
 
               <CustomFormItem
@@ -212,8 +229,8 @@ const SignUpForm = ({ setOpen }: { setOpen: (value: boolean) => void }) => {
                 name="passwordConfirmation"
                 placeholder="Confirm Password"
                 type="text"
-                field={field}
-                value={formState.passwordConfirmation}
+                signUpField={field}
+                value={authFormState.signUp.passwordConfirmation}
                 onChange={handleChange}
               />
 
@@ -222,9 +239,9 @@ const SignUpForm = ({ setOpen }: { setOpen: (value: boolean) => void }) => {
                 name="username"
                 placeholder="Username"
                 type="text"
-                field={field}
+                signUpField={field}
                 onChange={handleChange}
-                value={formState.username}
+                value={authFormState.signUp.username}
               />
             </>
           )}
@@ -235,7 +252,89 @@ const SignUpForm = ({ setOpen }: { setOpen: (value: boolean) => void }) => {
   );
 };
 
-import { CustomFormItemProps } from "@/types/form";
+const SignInForm = ({ setOpen }: {setOpen: (value: boolean) => void}) => {
+  const form = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+  const nav = useNavigate()
+
+  const authFormState = useSelector((state: RootState) => state.authForm);
+  const dispatch = useDispatch();
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    dispatch(updateSignInFields({ field: name as keyof AuthFormState["signIn"], value }));
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    const { email, password } = authFormState.signIn
+
+    signInWithEmailAndPassword(auth, email, password).then(async (userCredential) => {
+      const user = userCredential.user
+      const token = await user.getIdToken()
+
+      await fetchSignIn({ token, nav })
+    })
+
+    toast.success("User signed in successfully");
+    dispatch(clearFields());
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    console.log(authFormState)
+  }, [authFormState])
+
+  return (
+    <Form {...form}>
+      <form className="space-y-8" onSubmit={handleSubmit}>
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <CustomFormItem
+              label="Email"
+              name="email"
+              placeholder="Email"
+              type="text"
+              signInField={field}
+              onChange={handleChange}
+              value={authFormState.signIn.email}
+            />
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <CustomFormItem
+              label="Password"
+              name="password"
+              placeholder="Password"
+              type="text"
+              signInField={field}
+              onChange={handleChange}
+              value={authFormState.signIn.password}
+            />
+          )}
+        />
+
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
+  );
+};
+
+import { CustomFormItemProps } from "@/types/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/config/auth";
+import { useNavigate } from "react-router";
 
 const CustomFormItem = ({
   label,

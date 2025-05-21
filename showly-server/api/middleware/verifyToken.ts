@@ -20,15 +20,13 @@ export const verifyToken = async (
 
   try {
     const decoded = await adminAuth.verifyIdToken(token);
-    console.log("Decoded token:", decoded);
-
+    console.log(decoded)
     req.user = decoded;
 
     const docSnap = await db.collection("users").doc(decoded.uid).get();
     req.userData = docSnap.exists
       ? (docSnap.data() as {
           username: string;
-          dateOfBirth: string;
           createdAt: Date;
         })
       : undefined;
