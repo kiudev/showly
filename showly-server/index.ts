@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import userRouter from "./api/controllers/user";
 import seriesRouter from "./api/controllers/series";
 import cors from "./api/config/cors";
+import cookieParser = require("cookie-parser");
 dotenv.config();
 
 const app = express();
@@ -11,6 +12,7 @@ const PORT = process.env.PORT ?? 3000;
 
 app.use(express.json());
 app.use(cors);
+app.use(cookieParser())
 
 app.use(userRouter);
 app.use(seriesRouter);

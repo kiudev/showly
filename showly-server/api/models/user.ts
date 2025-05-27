@@ -14,9 +14,14 @@ export const createUserWithEmailAndPassword = async (
 
   try {
     if (password !== passwordConfirmation) {
-      return res.status(400).json({ message: "Passwords are not equal!", ok: false })
+      return res
+        .status(400)
+        .json({ message: "Passwords are not equal!", ok: false });
     } else if (password.length < 6) {
-      return res.status(400).json({ message: "Password must be at least 6 characters long!", ok: false })
+      return res.status(400).json({
+        message: "Password must be at least 6 characters long!",
+        ok: false,
+      });
     }
 
     const newUser = await adminAuth.createUser({
@@ -51,10 +56,10 @@ export const signInWithGoogleAccount = async (req: Request, res: Response) => {
       username: name,
       email,
       createdAt: new Date(),
-      picture
+      picture,
     });
 
-    res.status(200).json({ token, ok: true })
+    res.status(200).json({ token, ok: true });
   } catch (error) {
     console.error("Error signing in with Google", error);
 
@@ -62,13 +67,26 @@ export const signInWithGoogleAccount = async (req: Request, res: Response) => {
   }
 };
 
-export const authUser = async (req: UserRequest, res: Response) => {
-  res.json({
-    uid: req.user?.uid,
-    email: req.user?.email,
-    username: req.userData?.username,
-    createdAt: req.userData?.createdAt,
-  });
+export const getUserData = async (req: UserRequest, res: Response) => {
+  const sessionCookie = req.cookies.session;
+
+  try {
+    const decoded = await adminAuth.verifySessionCookie(sessionCookie, true);
+
+    const userDoc = await usersCollection.doc(decoded.uid).get();
+
+    const userData = userDoc.data();
+
+    res.status(200).json({
+      uid: decoded.uid,
+      email: decoded.email,
+      username: userData?.username,
+    });
+  } catch (error) {
+    res.status(401).json({
+      message: "Unauthorized",
+    });
+  }
 };
 
 export const updateUser = async (req: Request, res: Response) => {

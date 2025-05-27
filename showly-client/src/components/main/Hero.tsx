@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { BackgroundCarousel } from "../BackgroundCarousel";
-import { SignInButton } from "./hero/SignInButton";
+import { SignInButtonWithGoogle } from "./hero/SignInButtonWithGoogle";
 import { toast } from "sonner";
 
 const BACKDROP_IMG_URL = import.meta.env.VITE_BACKDROP_IMG_URL;
@@ -80,11 +80,12 @@ export const Hero = () => {
             dicta, mollitia maxime labore repudiandae ipsum ipsam dolorum
             tempore et laboriosam neque!
           </p>
-          <SignInButton />
 
           <div className="flex flex-row gap-5">
+          <SignInButtonWithGoogle />
+
             <Dialog onOpenChange={setSignUpOpen} open={signUpOpen}>
-              <DialogTrigger className="border rounded-lg px-3 text-sm font-semibold cursor-pointer">
+              <DialogTrigger className="rounded-lg px-3 bg-background text-foreground text-sm font-semibold cursor-pointer">
                 Join Us
               </DialogTrigger>
               <DialogContent className="bg-white">
@@ -110,7 +111,8 @@ export const Hero = () => {
                   <DialogTitle>Sign in to Showly</DialogTitle>
                   <DialogDescription>
                     <p>
-                      Sign in with your account to enjoy all the features of Showly.
+                      Sign in with your account to enjoy all the features of
+                      Showly.
                     </p>
 
                     <SignInForm setOpen={setSignInOpen} />
@@ -165,7 +167,11 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/state/store";
-import { updateSignUpFields, updateSignInFields, clearFields } from "@/state/form/formSlice";
+import {
+  updateSignUpFields,
+  updateSignInFields,
+  clearFields,
+} from "@/state/form/formSlice";
 import { AuthFormState } from "@/types/auth";
 import { createUserWithEmailAndPassword, fetchSignIn } from "@/services/auth";
 
@@ -184,7 +190,12 @@ const SignUpForm = ({ setOpen }: { setOpen: (value: boolean) => void }) => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    dispatch(updateSignUpFields({ field: name as keyof AuthFormState["signUp"], value }));
+    dispatch(
+      updateSignUpFields({
+        field: name as keyof AuthFormState["signUp"],
+        value,
+      })
+    );
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -252,43 +263,46 @@ const SignUpForm = ({ setOpen }: { setOpen: (value: boolean) => void }) => {
   );
 };
 
-const SignInForm = ({ setOpen }: {setOpen: (value: boolean) => void}) => {
+const SignInForm = ({ setOpen }: { setOpen: (value: boolean) => void }) => {
   const form = useForm({
     defaultValues: {
       email: "",
       password: "",
     },
   });
-  const nav = useNavigate()
+  const nav = useNavigate();
 
   const authFormState = useSelector((state: RootState) => state.authForm);
   const dispatch = useDispatch();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    dispatch(updateSignInFields({ field: name as keyof AuthFormState["signIn"], value }));
+    dispatch(
+      updateSignInFields({
+        field: name as keyof AuthFormState["signIn"],
+        value,
+      })
+    );
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    const { email, password } = authFormState.signIn
+    const { email, password } = authFormState.signIn;
 
-    signInWithEmailAndPassword(auth, email, password).then(async (userCredential) => {
-      const user = userCredential.user
-      const token = await user.getIdToken()
+    signInWithEmailAndPassword(auth, email, password).then(
+      async (userCredential) => {
+        const user = userCredential.user;
+        const token = await user.getIdToken();
 
-      await fetchSignIn({ token, nav })
-    })
+        await fetchSignIn({ token, nav });
+      }
+    );
 
     toast.success("User signed in successfully");
     dispatch(clearFields());
     setOpen(false);
   };
-
-  useEffect(() => {
-    console.log(authFormState)
-  }, [authFormState])
 
   return (
     <Form {...form}>

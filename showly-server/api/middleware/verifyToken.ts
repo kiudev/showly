@@ -18,19 +18,18 @@ export const verifyToken = async (
     return;
   }
 
-  try {
-    const decoded = await adminAuth.verifyIdToken(token);
-    console.log(decoded)
-    req.user = decoded;
+  const expiresIn = 60 * 60 * 24 * 5 * 1000;
 
-    const docSnap = await db.collection("users").doc(decoded.uid).get();
-    req.userData = docSnap.exists
-      ? (docSnap.data() as {
-          username: string;
-          createdAt: Date;
-        })
-      : undefined;
-    console.log(docSnap.data());
+  try {
+    const sessionCookie = await adminAuth.createSessionCookie(token, {
+      expiresIn,
+    });
+
+    res.setHeader("Set-Cookie", [
+      `session=${sessionCookie}; HttpOnly; Max-Age=${
+        expiresIn / 1000
+      }; Path=/; SameSite=Strict; Secure`,
+    ]);
 
     next();
   } catch (err) {

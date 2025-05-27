@@ -5,11 +5,12 @@ import {
   addShowsToUser,
   addWatchedEpisodesToUser,
   createComments,
-  authUser,
   createUserWithEmailAndPassword,
   signInWithGoogleAccount,
+  getUserData
 } from "../models/user";
 import { verifyToken } from "../middleware/verifyToken";
+import { Request, Response } from "express";
 
 const userRouter = Router();
 
@@ -17,7 +18,21 @@ userRouter.post("/users/sign-up/email-password", createUserWithEmailAndPassword)
 
 userRouter.post("/users/sign-in/google", signInWithGoogleAccount);
 
-userRouter.post("/users/sign-in/email-password", verifyToken, authUser);
+userRouter.post("/users/auth/user-cookie", verifyToken, (req: Request, res: Response) => {
+  res.status(200).json({ message: "User authenticated successfully" });
+});
+
+userRouter.get('/users/auth/user', getUserData)
+
+userRouter.post("/users/auth/sign-out", (req: Request, res: Response) => {
+  res.clearCookie("session", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  })
+
+  res.status(200).json({ message: "User signed out successfully!" })
+})
 
 userRouter.patch("/users/:uid", updateUser);
 

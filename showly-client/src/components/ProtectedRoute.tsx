@@ -1,12 +1,19 @@
 import { Navigate } from "react-router";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
-export const ProtectedRoute = ({ children }: {children: ReactNode}) => {
-  const token = localStorage.getItem("token")
+export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
+  const [isAuth, setIsAuth] = useState<boolean | null>(null);
 
-  if (!token) {
-    return <Navigate to="/" replace />;
-  }
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL}/users/auth/user`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then((response) => setIsAuth(response.ok))
+      .catch(() => setIsAuth(false));
+  }, []);
 
-  return children
-}
+  if (isAuth === null) return null;
+
+  return isAuth ? <>{children}</> : <Navigate to="/" replace />;
+};

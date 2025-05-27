@@ -35,19 +35,14 @@ export const signInWithGoogleAccount = async ({
       throw new Error("Failed to sign in with Google!");
     }
   } catch (error) {
-    toast.error("Failed to sign in with Google!")
+    toast.error("Failed to sign in with Google!");
 
     console.error("Error signing in:", error);
   }
 };
 
 export const createUserWithEmailAndPassword = async ({
-  signUp: {
-    email,
-    username,
-    password,
-    passwordConfirmation,
-  }
+  signUp: { email, username, password, passwordConfirmation },
 }: AuthFormState) => {
   try {
     await fetch(
@@ -78,34 +73,31 @@ export const fetchSignIn = async ({
 
   try {
     const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/users/sign-in/email-password`,
+      `${import.meta.env.VITE_API_URL}/users/auth/user-cookie`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
+        credentials: "include",
       }
     );
 
     if (response.ok) {
-      const data = await response.json();
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("username", data.username);
-
-      nav("/home");
-
       toast.dismiss();
 
       toast.success("Successfully signed in with email and password", {
         description: "Welcome to Showly!",
       });
+
+      nav("/home");
     } else {
       throw new Error("Failed to sign in with email and password!");
     }
   } catch (error) {
-    toast.error("Failed to sign in with email and password!")
+    toast.error("Failed to sign in with email and password!");
 
     console.error("Error signing in:", error);
   }
-}
+};
