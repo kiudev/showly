@@ -1,5 +1,6 @@
 import { Navigate } from "react-router";
 import { ReactNode, useEffect, useState } from "react";
+import App from "@/App";
 
 export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   const [isAuth, setIsAuth] = useState<boolean | null>(null);
@@ -15,5 +16,5 @@ export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
 
   if (isAuth === null) return null;
 
-  return isAuth ? <>{children}</> : <Navigate to="/" replace />;
+  return isAuth ? <App>{children}</App> : <Navigate to="/" replace />;
 };

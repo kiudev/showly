@@ -1,14 +1,10 @@
-import { Main } from "./pages/Main";
+import "flag-icons/css/flag-icons.min.css";
+import { ReactNode } from "react";
 
-function App() {
+function App({ children }: { children: ReactNode }) {
   return (
-    <div className="flex flex-col justify-center items-center max-w-full min-h-full absolute inset-0 bg-black text-white">
-      <header className="absolute z-1 top-10">
-        <h1 className="uppercase text-white tracking-widest text-5xl">
-          Showly
-        </h1>
-      </header>
-      <Main />
+    <div className="flex flex-col justify-center items-center max-w-screen min-h-screen bg-primary-800 text-neutral-100">
+      {children}
     </div>
   );
 }

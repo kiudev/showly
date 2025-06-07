@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router";
-import App from "./App";
+import { Main } from "./pages/Main";
 import { Serie } from "./pages/Serie";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Home } from "./pages/Home";
@@ -7,7 +7,7 @@ import { Home } from "./pages/Home";
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <Main />,
   },
   {
     path: "/home",

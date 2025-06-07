@@ -21,6 +21,7 @@ import {
 import { BackgroundCarousel } from "../BackgroundCarousel";
 import { SignInButtonWithGoogle } from "./hero/SignInButtonWithGoogle";
 import { toast } from "sonner";
+import { useLanguageContext } from "@/context/LanguageContext";
 
 const BACKDROP_IMG_URL = import.meta.env.VITE_BACKDROP_IMG_URL;
 const POSTER_IMG_URL = import.meta.env.VITE_POSTER_IMG_URL;
@@ -31,9 +32,11 @@ export const Hero = () => {
   });
   const [topRatedData, setTopRatedData] = useState<TopRatedData[]>([]);
   const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState<number>(0);
+  // const [current, setCurrent] = useState<number>(0);
   const [signUpOpen, setSignUpOpen] = useState(false);
   const [signInOpen, setSignInOpen] = useState(false);
+
+  const { t } = useLanguageContext();
 
   useEffect(() => {
     const getSeriesData = async () => {
@@ -52,13 +55,13 @@ export const Hero = () => {
       return;
     }
 
-    const updateCurrent = () => {
-      setCurrent(api.selectedScrollSnap() + 1);
-    };
+    // const updateCurrent = () => {
+    //   setCurrent(api.selectedScrollSnap() + 1);
+    // };
 
-    updateCurrent();
+    // updateCurrent();
 
-    api.on("select", updateCurrent);
+    // api.on("select", updateCurrent);
   }, [api]);
 
   return (
@@ -68,32 +71,25 @@ export const Hero = () => {
         backdropImgUrl={BACKDROP_IMG_URL}
       />
 
-      <section className="absolute inset-0 flex flex-row justify-between items-center gap-20 w-[1400px] m-auto">
-        <div className="w-[50%] flex flex-col gap-5 justify-center items-start">
-          <h1 className="text-6xl font-semibold">
-            Stay tuned with your favorites TV series
-          </h1>
+      <section className="absolute inset-0 flex flex-row justify-between items-end gap-20 m-auto">
+        <div className="w-full flex flex-col gap-5 justify-center items-start px-40 pb-40">
+          <h1 className="text-6xl font-semibold font-dela">{t("welcome")}</h1>
 
-          <p className="text-white">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Fugit sit
-            consequatur sed accusantium fuga possimus illo, architecto adipisci
-            dicta, mollitia maxime labore repudiandae ipsum ipsam dolorum
-            tempore et laboriosam neque!
-          </p>
+          <p className="text-white text-lg">{t("description")}</p>
 
           <div className="flex flex-row gap-5">
-          <SignInButtonWithGoogle />
+            <SignInButtonWithGoogle />
 
             <Dialog onOpenChange={setSignUpOpen} open={signUpOpen}>
               <DialogTrigger className="rounded-lg px-3 bg-background text-foreground text-sm font-semibold cursor-pointer">
-                Join Us
+                {t("signUpBtn")}
               </DialogTrigger>
-              <DialogContent className="bg-white">
+              <DialogContent className="bg-primary-500 text-neutral-100">
                 <DialogHeader>
-                  <DialogTitle>Sign up to Showly</DialogTitle>
+                  <DialogTitle>{t('signUpTitle')}</DialogTitle>
                   <DialogDescription>
                     <p>
-                      Create an account to enjoy all the features of Showly.
+                      {t('signUpSubtitle')}
                     </p>
 
                     <SignUpForm setOpen={setSignUpOpen} />
@@ -104,15 +100,14 @@ export const Hero = () => {
 
             <Dialog onOpenChange={setSignInOpen} open={signInOpen}>
               <DialogTrigger className="border rounded-lg px-4 py-2 text-sm font-semibold cursor-pointer">
-                Sign In
+                {t("signInBtn")}
               </DialogTrigger>
-              <DialogContent className="bg-white">
+              <DialogContent className="bg-primary-500 text-neutral-100">
                 <DialogHeader>
-                  <DialogTitle>Sign in to Showly</DialogTitle>
+                  <DialogTitle>{t('signInTitle')}</DialogTitle>
                   <DialogDescription>
                     <p>
-                      Sign in with your account to enjoy all the features of
-                      Showly.
+                      {t('signInSubtitle')}
                     </p>
 
                     <SignInForm setOpen={setSignInOpen} />
@@ -122,6 +117,8 @@ export const Hero = () => {
             </Dialog>
           </div>
         </div>
+        {/* <div className="absolute bottom-0 right-0 w-[800px] h-96 mask-l-from-1 mask-t-from-10 bg-primary-500 z-1"></div>
+                <div className="absolute bottom-0 right-20 w-[800px] h-96 mask-r-from-1 mask-t-from-10 bg-primary-500 z-1"></div> */}
 
         <div>
           <Carousel
@@ -133,15 +130,11 @@ export const Hero = () => {
               }),
             ]}
           >
-            <CarouselContent className="flex flex-row items-center">
-              {topRatedData.map((data, index) => (
+            <CarouselContent className="flex flex-row items-center w-full hidden">
+              {topRatedData.map((data) => (
                 <CarouselItem className={`w-14 h-full basis-1/3`} key={data.id}>
                   <img
-                    className={`h-full rounded-lg ${
-                      current !== index + 1
-                        ? "m-auto blur-[1px] w-32 object-cover"
-                        : "w-full"
-                    }`}
+                    className={`h-full `}
                     src={POSTER_IMG_URL + data.poster_path}
                     alt=""
                   />
@@ -185,6 +178,8 @@ const SignUpForm = ({ setOpen }: { setOpen: (value: boolean) => void }) => {
     },
   });
 
+  const { t } = useLanguageContext();
+
   const authFormState = useSelector((state: RootState) => state.authForm);
   const dispatch = useDispatch();
 
@@ -209,15 +204,15 @@ const SignUpForm = ({ setOpen }: { setOpen: (value: boolean) => void }) => {
 
   return (
     <Form {...form}>
-      <form className="space-y-8" onSubmit={handleSubmit}>
+      <form className="space-y-6 mt-6" onSubmit={handleSubmit}>
         <FormField
           control={form.control}
           name="username"
           render={({ field }) => (
             <>
               <CustomFormItem
-                label="Email"
-                placeholder="Email"
+                label={t('signEmail')}
+                placeholder={t('signEmailPlaceholder')}
                 name="email"
                 type="text"
                 signUpField={field}
@@ -226,29 +221,29 @@ const SignUpForm = ({ setOpen }: { setOpen: (value: boolean) => void }) => {
               />
 
               <CustomFormItem
-                label="Password"
+                label={t('signPassword')}
                 name="password"
-                placeholder="Password"
-                type="text"
+                placeholder={t('signPasswordPlaceholder')}
+                type="password"
                 signUpField={field}
                 onChange={handleChange}
                 value={authFormState.signUp.password}
               />
 
               <CustomFormItem
-                label="Password Confirmation"
+                label={t('signUpPasswordConfirmation')}
                 name="passwordConfirmation"
-                placeholder="Confirm Password"
-                type="text"
+                placeholder={t('signUpPasswordConfirmationPlaceholder')}
+                type="password"
                 signUpField={field}
                 value={authFormState.signUp.passwordConfirmation}
                 onChange={handleChange}
               />
 
               <CustomFormItem
-                label="Username"
+                label={t('signUpUsername')}
                 name="username"
-                placeholder="Username"
+                placeholder={t('signUpUsernamePlaceholder')}
                 type="text"
                 signUpField={field}
                 onChange={handleChange}
@@ -257,7 +252,7 @@ const SignUpForm = ({ setOpen }: { setOpen: (value: boolean) => void }) => {
             </>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button className="bg-neutral-100 text-neutral-900 cursor-pointer" type="submit">{t('signUpBtn')}</Button>
       </form>
     </Form>
   );
@@ -270,6 +265,8 @@ const SignInForm = ({ setOpen }: { setOpen: (value: boolean) => void }) => {
       password: "",
     },
   });
+
+  const { t } = useLanguageContext()
   const nav = useNavigate();
 
   const authFormState = useSelector((state: RootState) => state.authForm);
@@ -295,26 +292,25 @@ const SignInForm = ({ setOpen }: { setOpen: (value: boolean) => void }) => {
         const user = userCredential.user;
         const token = await user.getIdToken();
 
-        await fetchSignIn({ token, nav });
+        await fetchSignIn({ token, nav, t });
       }
     );
 
-    toast.success("User signed in successfully");
     dispatch(clearFields());
     setOpen(false);
   };
 
   return (
     <Form {...form}>
-      <form className="space-y-8" onSubmit={handleSubmit}>
+      <form className="space-y-6 mt-6" onSubmit={handleSubmit}>
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
             <CustomFormItem
-              label="Email"
+              label={t('signEmail')}
               name="email"
-              placeholder="Email"
+              placeholder={t('signEmailPlaceholder')}
               type="text"
               signInField={field}
               onChange={handleChange}
@@ -328,10 +324,10 @@ const SignInForm = ({ setOpen }: { setOpen: (value: boolean) => void }) => {
           name="password"
           render={({ field }) => (
             <CustomFormItem
-              label="Password"
+              label={t('signPassword')}
               name="password"
-              placeholder="Password"
-              type="text"
+              placeholder={t('signPasswordPlaceholder')}
+              type="password"
               signInField={field}
               onChange={handleChange}
               value={authFormState.signIn.password}
@@ -339,7 +335,7 @@ const SignInForm = ({ setOpen }: { setOpen: (value: boolean) => void }) => {
           )}
         />
 
-        <Button type="submit">Submit</Button>
+        <Button className="bg-neutral-100 text-neutral-900 cursor-pointer" type="submit">{t('signInBtn')}</Button>
       </form>
     </Form>
   );
@@ -362,6 +358,7 @@ const CustomFormItem = ({
     <FormLabel>{label}</FormLabel>
     <FormControl>
       <Input
+        className="bg-neutral-100 text-neutral-900 border-none  focus-visible:outline-none focus-visible:ring-[0px]"
         name={name}
         placeholder={placeholder}
         type={type}

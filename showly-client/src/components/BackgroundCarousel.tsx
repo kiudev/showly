@@ -29,9 +29,9 @@ export const BackgroundCarousel = ({
     >
       <CarouselContent>
         {trendingData.results.map((data) => (
-          <CarouselItem className="w-full h-[500px]" key={data.id}>
+          <CarouselItem className="w-full h-screen" key={data.id}>
             <img
-              className="w-full h-full object-cover object-top mask-b-from-5"
+              className="w-full h-full object-cover object-top mask-b-from-60 mask-t-from-[600px]"
               src={backdropImgUrl + data.backdrop_path}
               alt=""
             />

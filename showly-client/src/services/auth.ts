@@ -67,9 +67,10 @@ export const createUserWithEmailAndPassword = async ({
 
 export const fetchSignIn = async ({
   token,
-  nav
-}: SignInWithGoogleAccountProps) => {
-  toast.loading("Signing in with email and password...");
+  nav,
+  t
+}: SignInWithGoogleAccountProps & { t: (key: string) => string }) => {
+  toast.loading(t('toastSignInLoading'));
 
   try {
     const response = await fetch(
@@ -87,7 +88,7 @@ export const fetchSignIn = async ({
     if (response.ok) {
       toast.dismiss();
 
-      toast.success("Successfully signed in with email and password", {
+      toast.success(t('toastSignIn'), {
         description: "Welcome to Showly!",
       });
 
@@ -96,7 +97,7 @@ export const fetchSignIn = async ({
       throw new Error("Failed to sign in with email and password!");
     }
   } catch (error) {
-    toast.error("Failed to sign in with email and password!");
+    toast.error(t('toastSignInError'));
 
     console.error("Error signing in:", error);
   }
