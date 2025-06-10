@@ -28,7 +28,7 @@ export const verifyToken = async (
     res.setHeader("Set-Cookie", [
       `session=${sessionCookie}; HttpOnly; Max-Age=${
         expiresIn / 1000
-      }; Path=/; SameSite=Strict; Secure`,
+      }; Path=/; SameSite=None; Secure`,
     ]);
 
     next();
