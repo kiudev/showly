@@ -23,65 +23,65 @@
 
 @font-face {
   font-family: "Dela Gothic One";
-  src: url("fonts/DelaGothicOne-Regular.woff2");
+  src: url("/fonts/DelaGothicOne-Regular.woff2");
 }
 
 @font-face {
   font-family: "Cal Sans";
-  src: url("fonts/CalSans-Regular.ttf");
+  src: url("/fonts/CalSans-Regular.ttf");
 }
 
 @font-face {
   font-family: "Inter";
-  src: url("fonts/Inter_18pt-Thin.woff2");
+  src: url("/fonts/Inter_18pt-Thin.woff2");
   font-weight: 100;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Inter";
-  src: url("fonts/Inter_18pt-ExtraLight.woff2");
+  src: url("/fonts/Inter_18pt-ExtraLight.woff2");
   font-weight: 200;
 }
 
 @font-face {
   font-family: "Inter";
-  src: url("fonts/Inter_18pt-Light.woff2");
+  src: url("/fonts/Inter_18pt-Light.woff2");
   font-weight: 300;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Inter";
-  src: url("fonts/Inter_18pt-Regular.woff2");
+  src: url("/fonts/Inter_18pt-Regular.woff2");
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Inter";
-  src: url("fonts/Inter_18pt-Medium.woff2");
+  src: url("/fonts/Inter_18pt-Medium.woff2");
   font-weight: 500;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Inter";
-  src: url("fonts/Inter_18pt-SemiBold.woff2");
+  src: url("/fonts/Inter_18pt-SemiBold.woff2");
   font-weight: 600;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Inter";
-  src: url("fonts/Inter_18pt-Bold.woff2");
+  src: url("/fonts/Inter_18pt-Bold.woff2");
   font-weight: 700;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Inter";
-  src: url("fonts/Inter_18pt-ExtraBold.woff2");
+  src: url("/fonts/Inter_18pt-ExtraBold.woff2");
   font-weight: 800;
   font-style: normal;
 }
