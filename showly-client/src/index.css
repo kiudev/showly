@@ -40,7 +40,7 @@
 
 @font-face {
   font-family: "Inter";
-  src: url("/fonts/Inter_18pt-ExtraLight.woff2");
+  src: url("fonts/Inter_18pt-ExtraLight.woff2");
   font-weight: 200;
 }
 
@@ -85,7 +85,6 @@
   font-weight: 800;
   font-style: normal;
 }
-
 
 body {
   font-family: "Inter", sans-serif;
