@@ -15,22 +15,20 @@ export const signInWithGoogleAccount = async ({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ token }),
+        credentials: "include"
       }
     );
 
     if (response.ok) {
-      const data = await response.json();
-      localStorage.setItem("token", data.token);
-
-      nav("/home");
-
       toast.dismiss();
 
       toast.success("Successfully signed in with Google", {
         description: "Welcome to Showly!",
       });
+
+      nav("/home");
     } else {
       throw new Error("Failed to sign in with Google!");
     }
@@ -68,9 +66,9 @@ export const createUserWithEmailAndPassword = async ({
 export const fetchSignIn = async ({
   token,
   nav,
-  t
+  t,
 }: SignInWithGoogleAccountProps & { t: (key: string) => string }) => {
-  toast.loading(t('toastSignInLoading'));
+  toast.loading(t("toastSignInLoading"));
 
   try {
     const response = await fetch(
@@ -88,7 +86,7 @@ export const fetchSignIn = async ({
     if (response.ok) {
       toast.dismiss();
 
-      toast.success(t('toastSignIn'), {
+      toast.success(t("toastSignIn"), {
         description: "Welcome to Showly!",
       });
 
@@ -97,7 +95,7 @@ export const fetchSignIn = async ({
       throw new Error("Failed to sign in with email and password!");
     }
   } catch (error) {
-    toast.error(t('toastSignInError'));
+    toast.error(t("toastSignInError"));
 
     console.error("Error signing in:", error);
   }

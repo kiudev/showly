@@ -5,7 +5,7 @@ import { Nav } from "@/components/main/nav/Nav";
 export const Main = () => {
   return (
     <App>
-      <header className="fixed z-1 top-10 flex justify-between items-center px-40 w-full">
+      <header className="fixed z-1 top-0 flex justify-between items-center py-10 px-40 w-full animate-blur">
         <img
           className="w-56 h-auto object-contain"
           src="images/showly-logo.png"
@@ -15,13 +15,9 @@ export const Main = () => {
         <Nav />
       </header>
 
-      <main className="flex flex-col gap-5 items-center w-full h-full">
+      <main className="w-full h-screen">
         <Hero />
       </main>
-
-      <div className="w-full h-96">
-
-      </div>
     </App>
   );
 };

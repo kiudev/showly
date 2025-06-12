@@ -22,7 +22,7 @@ export const BackgroundCarousel = ({
       opts={{ loop: true }}
       plugins={[
         Autoplay({
-          delay: 5000,
+          delay: 3000,
         }),
         Fade(),
       ]}

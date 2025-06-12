@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 
 function App({ children }: { children: ReactNode }) {
   return (
-    <div className="flex flex-col justify-center items-center max-w-screen min-h-screen bg-primary-800 text-neutral-100">
+    <div className="min-w-screen min-h-screen bg-primary-800 text-neutral-100 flex flex-col justify-center items-center font-inter">
       {children}
     </div>
   );

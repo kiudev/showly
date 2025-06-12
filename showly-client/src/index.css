@@ -19,6 +19,7 @@
 
   --font-dela: "Dela Gothic One";
   --font-cal-sans: "Cal Sans";
+  --font-inter: "Inter"
 }
 
 @font-face {
@@ -87,8 +88,22 @@
 }
 
 body {
-  font-family: "Inter", sans-serif;
-  display: flex;
-  max-width: 100vw;
-  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+@keyframes blur {
+  0% {
+    backdrop-filter: blur(0px);
+  }
+  50% {
+    backdrop-filter: blur(8px);
+  }
+  100% {
+    backdrop-filter: blur(16px);
+  }
+}
+
+.animate-blur {
+  animation: blur ease-in-out;
+  animation-timeline: scroll();
 }

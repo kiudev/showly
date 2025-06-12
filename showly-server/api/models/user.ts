@@ -46,7 +46,18 @@ export const createUserWithEmailAndPassword = async (
 };
 
 export const signInWithGoogleAccount = async (req: Request, res: Response) => {
-  const { token } = req.body;
+  const authHeader = req.headers.authorization;
+
+  const token = authHeader?.startsWith("Bearer ")
+    ? authHeader.split(" ")[1]
+    : null;
+
+  if (!token) {
+    res.status(401).json({ error: "No token provided" });
+    return;
+  }
+
+  const expiresIn = 60 * 60 * 24 * 5 * 1000;
 
   try {
     const decodedToken = await adminAuth.verifyIdToken(token);
@@ -59,7 +70,20 @@ export const signInWithGoogleAccount = async (req: Request, res: Response) => {
       picture,
     });
 
-    res.status(200).json({ token, ok: true });
+    const sessionCookie = await adminAuth.createSessionCookie(token, {
+      expiresIn,
+    });
+
+    res.setHeader("Set-Cookie", [
+      `session=${sessionCookie}; HttpOnly; Max-Age=${
+        expiresIn / 1000
+      }; Path=/; SameSite=None; Secure`,
+    ]);
+
+    res.status(200).json({
+      message: "User authenticated successfully with Google",
+      ok: true,
+    });
   } catch (error) {
     console.error("Error signing in with Google", error);
 
@@ -81,6 +105,7 @@ export const getUserData = async (req: UserRequest, res: Response) => {
       uid: decoded.uid,
       email: decoded.email,
       username: userData?.username,
+      picture: userData?.picture
     });
   } catch (error) {
     res.status(401).json({

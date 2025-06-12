@@ -7,7 +7,7 @@ import {
   createComments,
   createUserWithEmailAndPassword,
   signInWithGoogleAccount,
-  getUserData
+  getUserData,
 } from "../models/user";
 import { verifyToken } from "../middleware/verifyToken";
 import { Request, Response } from "express";
