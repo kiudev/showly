@@ -1,11 +1,13 @@
 // import { auth, db } from "@/config/auth"
 import { useLanguageContext } from "@/context/LanguageContext";
-import { useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
-import { Nav } from "@/components/main/nav/Nav";
 import { LogOut } from "lucide-react";
+
+import { Header } from "@/components/home/Header";
+
 
 interface UserData {
   uid: number;
@@ -15,13 +17,14 @@ interface UserData {
   picture: string | null;
 }
 
-export const Home = () => {
+export const Home = ({ children }: { children?: ReactNode }) => {
   const [userData, setUserData] = useState<UserData>({
     uid: 0,
     email: "",
     username: "",
     picture: null,
   });
+
   const { t } = useLanguageContext();
   const nav = useNavigate();
 
@@ -67,31 +70,21 @@ export const Home = () => {
 
   return (
     <>
-      <header className="top-0 z-1 flex justify-between items-center min-w-screen px-40 py-3 bg-primary-500">
-        <img
-          className="w-32 h-auto object-contain"
-          src="images/showly-logo.png"
-          alt=""
-        />
+      <Header />
 
-        <Nav />
-      </header>
+      <main className="flex gap-2 relative">
+        <aside className="top-[20vh] left-10 w-12 h-[500px] p-1.5 rounded-lg fixed bg-neutral-100/20 backdrop-blur-lg flex flex-col justify-between items-center z-1">
+          <UserMenu userData={userData} />
 
-      <main className="flex w-screen gap-2 relative">
-        <div className="absolute">
-          <aside className="top-[20vh] left-10 w-12 h-[500px] p-1.5 rounded-lg fixed bg-primary-500/30 backdrop-blur-lg flex flex-col justify-between items-center">
-            <UserMenu userData={userData} />
+          <button
+            className="bg-neutral-100 text-neutral-900 p-2 cursor-pointer rounded-full"
+            onClick={handleSignOut}
+          >
+            <LogOut />
+          </button>
+        </aside>
 
-            <button
-              className="bg-neutral-100 text-neutral-900 p-2 cursor-pointer rounded-full"
-              onClick={handleSignOut}
-            >
-              <LogOut />
-            </button>
-          </aside>
-        </div>
-
-        <main className="bg-primary-900 p-5 rounded-lg w-screen h-[200vh]"></main>
+        {children}
       </main>
     </>
   );
@@ -128,7 +121,11 @@ const UserMenu = ({ userData }: { userData: UserData }) => {
 
       {shouldRender && (
         <div
-          className={`w-96 h-40 p-5 bg-primary-500/20 absolute left-16 animate-duration-400 ${isVisible ? 'animate-in slide-in-from-left-5 fade-in' : 'animate-out slide-out-to-left-5 fade-out'} rounded-lg`}
+          className={`w-96 h-40 p-5 bg-primary-500/20 absolute left-16 animate-duration-400 ${
+            isVisible
+              ? "animate-in slide-in-from-left-5 fade-in"
+              : "animate-out slide-out-to-left-5 fade-out"
+          } rounded-lg`}
         >
           <header className="flex items-center">
             <p>{userData.username}</p>

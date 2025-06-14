@@ -1,5 +1,6 @@
 const API_KEY = process.env.TMDB_API_KEY;
 const BASE_URL = process.env.TMDB_BASE_URL;
+import { Request, Response } from "express";
 
 export const getTrendingSeries = async (req, res) => {
   try {
@@ -14,7 +15,7 @@ export const getTrendingSeries = async (req, res) => {
   }
 };
 
-export const getTopRatedSeries = async (req, res) => {
+export const getTopRatedSeries = async (req: Request, res: Response) => {
   try {
     const response = await fetch(BASE_URL + "/tv/top_rated?api_key=" + API_KEY);
     const data = await response.json();
@@ -29,3 +30,15 @@ export const getTopRatedSeries = async (req, res) => {
     res.status(400).json({ message: "Error doing a request of top rated series", error: error });
   }
 };
+
+export const getAiringTodaySeries = async (req: Request, res: Response) => {
+  try {
+    const response = await fetch(BASE_URL + "/tv/airing_today?api_key=" + API_KEY);
+    const data = await response.json();
+
+    res.status(200).json(data)
+  } catch (error) {
+    console.error("Error doing a request of airing today series");
+    res.status(400).json({ message: "Error doing a request of airing today series", error: error });
+  }
+}

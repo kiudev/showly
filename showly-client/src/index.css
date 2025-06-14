@@ -19,7 +19,7 @@
 
   --font-dela: "Dela Gothic One";
   --font-cal-sans: "Cal Sans";
-  --font-inter: "Inter"
+  --font-inter: "Inter";
 }
 
 @font-face {
@@ -91,19 +91,56 @@ body {
   overflow-x: hidden;
 }
 
-@keyframes blur {
-  0% {
-    backdrop-filter: blur(0px);
+@supports (animation-timeline: scroll()) {
+  .animate-blur {
+    animation: blur ease-in-out;
+    animation-timeline: scroll();
   }
-  50% {
-    backdrop-filter: blur(8px);
-  }
-  100% {
-    backdrop-filter: blur(16px);
-  }
-}
 
-.animate-blur {
-  animation: blur ease-in-out;
-  animation-timeline: scroll();
+  .animate-header {
+    animation: header 1s ease-in-out both;
+    animation-timeline: scroll();
+    animation-range: 0 200px;
+  }
+
+  .logo {
+    animation: fadeOut ease-out both;
+    animation-timeline: scroll();
+    animation-range: 0px 500px;
+  }
+
+  @keyframes header {
+    0% {
+      box-shadow: none;
+      min-width: 100vw;
+      padding-inline: 10rem;
+    }
+    100% {
+      background-color: color-mix(in oklab, var(--color-primary-500) /* #008080 */ 80%, transparent);
+      width: 500px;
+      border-radius: 10px;
+      top: 40px;
+      padding-inline: 40px;
+      padding-block: 10px;
+    }
+  }
+
+  @keyframes blur {
+    0% {
+      backdrop-filter: blur(0px);
+    }
+    50% {
+      backdrop-filter: blur(8px);
+    }
+    100% {
+      backdrop-filter: blur(16px);
+    }
+  }
+
+  @keyframes fadeOut {
+    to {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+  }
 }

@@ -1,6 +1,4 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { getTrendingSeries } from "@/services/series";
-import { TrendingData } from "@/types/seriesDataTypes";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,13 +13,11 @@ import { BackgroundCarousel } from "../BackgroundCarousel";
 import { SignInButtonWithGoogle } from "./hero/SignInButtonWithGoogle";
 import { toast } from "sonner";
 import { useLanguageContext } from "@/context/LanguageContext";
+import { TrendingProvider } from "@/context/TrendingContext";
 
 const BACKDROP_IMG_URL = import.meta.env.VITE_BACKDROP_IMG_URL;
 
 export const Hero = () => {
-  const [trendingData, setTrendingData] = useState<TrendingData>({
-    results: [],
-  });
   // const [topRatedData, setTopRatedData] = useState<TopRatedData[]>([]);
   // const [api, setApi] = useState<CarouselApi>();
   // const [current, setCurrent] = useState<number>(0);
@@ -29,18 +25,6 @@ export const Hero = () => {
   const [signInOpen, setSignInOpen] = useState(false);
 
   const { t } = useLanguageContext();
-
-  useEffect(() => {
-    const getSeriesData = async () => {
-      const trendingFunc = await getTrendingSeries();
-      setTrendingData(trendingFunc);
-
-      // const topRatedFunc = await getTopRatedSeries();
-      // setTopRatedData(topRatedFunc);
-    };
-
-    getSeriesData();
-  }, []);
 
   // useEffect(() => {
   //   if (!api) {
@@ -58,10 +42,11 @@ export const Hero = () => {
 
   return (
     <>
+    <TrendingProvider>
       <BackgroundCarousel
-        trendingData={trendingData}
         backdropImgUrl={BACKDROP_IMG_URL}
       />
+    </TrendingProvider>
 
       <section className="flex flex-col gap-5 justify-center items-start px-40 absolute bottom-40">
         <h1 className="text-6xl font-semibold font-dela">{t("welcome")}</h1>

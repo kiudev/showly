@@ -1,19 +1,19 @@
 import { createBrowserRouter } from "react-router";
-import { Main } from "./pages/Main";
+import { Index } from "./pages/Index";
 import { Serie } from "./pages/Serie";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import { Home } from "./pages/Home";
+import { Catalog } from "./components/Catalog";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Main />,
+    element: <Index />,
   },
   {
     path: "/home",
     element: (
       <ProtectedRoute>
-        <Home />
+        <Catalog />
       </ProtectedRoute>
     ),
   },
