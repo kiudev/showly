@@ -33,7 +33,7 @@ export const Nav = ({ children }: { children?: ReactNode }) => {
 
         <ul
           className={`${
-            isSelected ? "flex flex-col absolute top-14" : "hidden"
+            isSelected ? "flex flex-col absolute top-24" : "hidden"
           }`}
         >
           {Object.entries(languages)

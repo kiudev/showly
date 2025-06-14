@@ -18,7 +18,7 @@ export const TrendingProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const getSeriesData = async () => {
       const trendingFunc = await getTrendingSeries();
-      setTrendingData(trendingFunc);
+      setTrendingData({ results: trendingFunc ?? [] });
 
       // const topRatedFunc = await getTopRatedSeries();
       // setTopRatedData(topRatedFunc);

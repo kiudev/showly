@@ -18,7 +18,6 @@ import { TrendingProvider } from "@/context/TrendingContext";
 const BACKDROP_IMG_URL = import.meta.env.VITE_BACKDROP_IMG_URL;
 
 export const Hero = () => {
-  // const [topRatedData, setTopRatedData] = useState<TopRatedData[]>([]);
   // const [api, setApi] = useState<CarouselApi>();
   // const [current, setCurrent] = useState<number>(0);
   const [signUpOpen, setSignUpOpen] = useState(false);
@@ -42,11 +41,10 @@ export const Hero = () => {
 
   return (
     <>
-    <TrendingProvider>
-      <BackgroundCarousel
-        backdropImgUrl={BACKDROP_IMG_URL}
-      />
-    </TrendingProvider>
+      <TrendingProvider>
+          <BackgroundCarousel backdropImgUrl={BACKDROP_IMG_URL} />
+
+      </TrendingProvider>
 
       <section className="flex flex-col gap-5 justify-center items-start px-40 absolute bottom-40">
         <h1 className="text-6xl font-semibold font-dela">{t("welcome")}</h1>
@@ -125,7 +123,7 @@ const SignUpForm = ({ setOpen }: { setOpen: (value: boolean) => void }) => {
 
   const { t } = useLanguageContext();
 
-  const authFormState = useSelector((state: RootState) => state.authForm);
+  const authFormState = useSelector((state: RootState) => state.authForm as AuthFormState);
   const dispatch = useDispatch();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
